@@ -34,7 +34,7 @@ done
 init_ok=no
 if [ -x ${appmnt}/etc/rc ]; then
   if ${appmnt}/etc/rc; then
-    init_ok=true
+    init_ok=yes
   fi
 fi
 
