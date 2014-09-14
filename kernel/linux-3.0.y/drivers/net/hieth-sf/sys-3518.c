@@ -37,6 +37,8 @@ static void hieth_phy_reset(void)
 #ifdef CONFIG_HIETH_RESET_HELPER_EN
 	int val;
 	unsigned long flags;
+    /*set muxreg26 to used gpio2_6 as gpio*/
+    writew(0, (IO_ADDRESS(0x200F0068)));
 	local_irq_save(flags);
 	/*gpiox[x] set to reset, then sleep 200ms*/
 	val = readw(IO_ADDRESS(CONFIG_HIETH_RESET_HELPER_GPIO_BASE) + 0x400);

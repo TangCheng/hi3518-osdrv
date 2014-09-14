@@ -44,6 +44,10 @@ static void hieth_phy_reset(void)
 {
 #ifdef HISFV_RESET_GPIO_EN
 	unsigned int val;
+
+    /*gpio2_6 mux with mii_txer*/
+    __raw_writew(0, IO_CONFIG_REG_BASE + HIETH_MII_TXER_MUX);
+    
 	/*gpiox[x] set to reset, then delay 200ms*/
 	val = __raw_readw(HISFV_RESET_GPIO_BASE + HISFV_RESET_GPIO_DIR);
 	val |= (HISFV_RESET_GPIO_DIR_OUT << HISFV_RESET_GPIO_BIT);
