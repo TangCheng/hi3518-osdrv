@@ -30,5 +30,5 @@ else
   target=all
 fi
 
-make OSDRV_CROSS=${cross} CHIP=hi3518a ${target}
+make OSDRV_CROSS=${cross} CHIP=hi3516c ${target}
 
