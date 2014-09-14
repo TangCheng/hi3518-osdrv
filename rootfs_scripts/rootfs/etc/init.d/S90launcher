@@ -3,7 +3,7 @@
 ## application partition name
 partname="rootfs"
 ## supported partition type list
-parttype="jffs2 squashfs"
+parttype="squashfs jffs2"
 ## default mtd device
 mtddev="/dev/mtdblock4"
 ## mount point
