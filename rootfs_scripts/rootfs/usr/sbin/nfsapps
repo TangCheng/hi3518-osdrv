@@ -1,0 +1,23 @@
+#!/bin/sh
+
+serverip="192.168.1.99"
+mountpoint="/apps"
+
+for cmdline in `cat /proc/cmdline`
+do
+	case "$cmdline" in
+	ip=*)
+		serverip=`echo "$cmdline" | awk -F: '{print $2}'`
+		;;
+	esac
+done
+
+mount -t nfs -o nolock,tcp ${serverip}:${mountpoint} ${mountpoint}
+ln -s ${mountpoint}/usr/lib /usr/lib
+ln -s ${mountpoint}/usr/share/fonts /usr/share/fonts
+ln -s ${mountpoint}/etc/lighttpd /etc/lighttpd
+
+if [ -x ${mountpoint}/etc/rc ]; then
+  ${mountpoint}/etc/rc
+fi
+
