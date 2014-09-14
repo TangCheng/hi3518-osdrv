@@ -134,13 +134,13 @@
 /* env in flash instead of CFG_ENV_IS_NOWHERE */
 #define CONFIG_ENV_IS_IN_SPI_FLASH	1
 
-#define CONFIG_ENV_OFFSET		0x80000 /* environment starts here */
+#define CONFIG_ENV_OFFSET		0x40000 /* environment starts here */
 #define CONFIG_ENV_NAND_ADDR		(CONFIG_ENV_OFFSET)
 #define CONFIG_ENV_SPI_ADDR		(CONFIG_ENV_OFFSET)
 #define CONFIG_CMD_SAVEENV
 
 #define CONFIG_STACKSIZE		(128 * 1024)
-#define CONFIG_ENV_SIZE			0x40000 /* include ENV_HEADER_SIZE */
+#define CONFIG_ENV_SIZE			0x20000 /* include ENV_HEADER_SIZE */
 #define CONFIG_ENV_SECT_SIZE		CONFIG_ENV_SIZE
 #define CONFIG_NR_DRAM_BANKS		1	/* we have 1 bank of DRAM */
 #define CFG_BOOT_PARAMS			(MEM_BASE_DDR + 0x0100)
@@ -148,13 +148,13 @@
 /*-----------------------------------------------------------------------
  *  Environment   Configuration
  ------------------------------------------------------------------------*/
-#define CONFIG_BOOTCOMMAND "bootm 0x82000000"
+#define CONFIG_BOOTCOMMAND "sf probe 0; sf read 0x82000000 0x80000 0x400000; bootm 0x82000000"
 
 #define CONFIG_BOOTDELAY 1
-#define CONFIG_BOOTARGS	"mem=64M console=ttyAMA0,115200"
+#define CONFIG_BOOTARGS	"mem=128M console=ttyAMA0,115200n8 root=/dev/ram0 rootfstype=ramfs ip=192.168.1.100:192.168.1.99:192.168.1.1:255.255.255.0:HI3516C:eth0 mtdparts=hi_sfc:256K(boot),128K(boot_param),128K(reserve),4M(kernel),11M(rootfs),512K(param)"
 #define CONFIG_NETMASK	255.255.255.0		/* talk on MY local net */
-#define CONFIG_IPADDR	192.168.1.10		/* default static IP */
-#define CONFIG_SERVERIP	192.168.1.2		/* default tftp server ip */
+#define CONFIG_IPADDR	192.168.1.100		/* default static IP */
+#define CONFIG_SERVERIP	192.168.1.99		/* default tftp server ip */
 #define CONFIG_ETHADDR	00:00:23:34:45:66
 #define CONFIG_BOOTFILE	"uImage"		/* file to load */
 #define CONFIG_BAUDRATE	115200
@@ -203,12 +203,13 @@
 	#define HIETH_MII_RMII_MODE_D		HISFV_MII_MODE
 	#define HISFV_PHY_U			1
 	#define HISFV_PHY_D			2 /* fix me */
-	#undef HISFV_RESET_GPIO_EN
+	#define HISFV_RESET_GPIO_EN
 	#ifdef HISFV_RESET_GPIO_EN
-		/* use gpio5_0 to control sfv reset */
-		#define HISFV_RESET_GPIO_BASE	GPIO0_REG_BASE
+		/* use gpio2_6 to control sfv reset */
+        #define HIETH_MII_TXER_MUX      0x68
+		#define HISFV_RESET_GPIO_BASE	GPIO2_REG_BASE
 		#define HISFV_RESET_GPIO_DIR	0x400
-		#define HISFV_RESET_GPIO_BIT	5
+		#define HISFV_RESET_GPIO_BIT	6
 		#define HISFV_RESET_GPIO_DIR_OUT 1
 		/* 0-reset; 1-undo reset */
 		#define HISFV_RESET_GPIO_DATA	0
@@ -219,7 +220,7 @@
  * console display  Configuration
  ------------------------------------------------------------------------*/
 #define CONFIG_VERSION_VARIABLE	1		/* used in common/main.c */
-#define CONFIG_SYS_PROMPT	"hisilicon # "	/* Monitor Command Prompt */
+#define CONFIG_SYS_PROMPT	"yxgtech # "	/* Monitor Command Prompt */
 #define CONFIG_SYS_CBSIZE	1024		/* Console I/O Buffer Size */
 #define CONFIG_SYS_PBSIZE	(CONFIG_SYS_CBSIZE+sizeof(CONFIG_SYS_PROMPT)+16)
 
