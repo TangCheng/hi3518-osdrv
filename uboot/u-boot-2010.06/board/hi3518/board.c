@@ -85,6 +85,24 @@ void boot_flag_init(void)
 	}
 }
 
+void ir_led_init(void)
+{
+#define IR_CTRL_MUX_REG          (IO_CONFIG_REG_BASE + 0x00EC)  /* GPIO8_1 */
+#define IR_CTRL_GPIO_BASE        GPIO8_REG_BASE    
+#define IR_CTRL_GPIO_DIR_REG     (IR_CTRL_GPIO_BASE + 0x400)
+#define IR_CTRL_GPIO_BIT         1
+#define IR_CTRL_GPIO_DATA_REG    (IR_CTRL_GPIO_BASE + (4 << IR_CTRL_GPIO_BIT))
+#define IR_CTRL_GPIO_DATA_OFF    0    
+    
+    unsigned int val;
+    
+    __raw_writew(0x1, IR_CTRL_MUX_REG);
+    val = __raw_readw(IR_CTRL_GPIO_DIR_REG);
+	val |= (0x1 << IR_CTRL_GPIO_BIT);
+	__raw_writew(val, IR_CTRL_GPIO_DIR_REG);
+	__raw_writew(IR_CTRL_GPIO_DATA_OFF,	IR_CTRL_GPIO_DATA_REG);
+}
+
 /*
  * Miscellaneous platform dependent initialisations
  */
@@ -97,6 +115,8 @@ int board_init(void)
 	gd->flags = 0;
 
 	boot_flag_init();
+
+    ir_led_init();
 
 	return 0;
 }
