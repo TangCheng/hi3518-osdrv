@@ -88,11 +88,11 @@ void boot_flag_init(void)
 void ir_led_init(void)
 {
 #define IR_CTRL_MUX_REG          (IO_CONFIG_REG_BASE + 0x00EC)  /* GPIO8_1 */
-#define IR_CTRL_GPIO_BASE        GPIO8_REG_BASE    
+#define IR_CTRL_GPIO_BASE        GPIO8_REG_BASE
 #define IR_CTRL_GPIO_DIR_REG     (IR_CTRL_GPIO_BASE + 0x400)
 #define IR_CTRL_GPIO_BIT         1
 #define IR_CTRL_GPIO_DATA_REG    (IR_CTRL_GPIO_BASE + (4 << IR_CTRL_GPIO_BIT))
-#define IR_CTRL_GPIO_DATA_OFF    0    
+#define IR_CTRL_GPIO_DATA_OFF    0
     
     unsigned int val;
     
@@ -101,6 +101,25 @@ void ir_led_init(void)
 	val |= (0x1 << IR_CTRL_GPIO_BIT);
 	__raw_writew(val, IR_CTRL_GPIO_DIR_REG);
 	__raw_writew(IR_CTRL_GPIO_DATA_OFF,	IR_CTRL_GPIO_DATA_REG);
+}
+
+void sys_led_init(void)
+{
+#define SYS_LED_MUX_REG          (IO_CONFIG_REG_BASE + 0x00F4)  /* GPIO8_3 */
+#define SYS_LED_GPIO_BASE        GPIO8_REG_BASE
+#define SYS_LED_GPIO_DIR_REG     (SYS_LED_GPIO_BASE + 0x400)
+#define SYS_LED_GPIO_BIT         3
+#define SYS_LED_GPIO_DATA_REG    (SYS_LED_GPIO_BASE + (4 << SYS_LED_GPIO_BIT))
+#define SYS_LED_GPIO_DATA_ON     0x0
+#define SYS_LED_GPIO_DATA_OFF    0x8
+    
+    unsigned int val;
+    
+    __raw_writew(0x1, SYS_LED_MUX_REG);
+    val = __raw_readw(SYS_LED_GPIO_DIR_REG);
+	val |= (0x1 << SYS_LED_GPIO_BIT);
+	__raw_writew(val, SYS_LED_GPIO_DIR_REG);
+	__raw_writew(SYS_LED_GPIO_DATA_ON, SYS_LED_GPIO_DATA_REG);
 }
 
 /*
@@ -117,6 +136,7 @@ int board_init(void)
 	boot_flag_init();
 
     ir_led_init();
+    sys_led_init();
 
 	return 0;
 }
