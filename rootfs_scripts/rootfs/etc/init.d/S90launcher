@@ -43,4 +43,7 @@ if [ x"$mount_ok" != "xyes" -o x"$init_ok" != "xyes" ]; then
   ## start tftp server to upgrade the firmware
   /usr/bin/udpsvd -vE 0 69 /usr/bin/tftpd -c /var/cache/firmware &
   exit 1
+else
+  /apps/bin/sysled.sh &
+  exit 0
 fi
