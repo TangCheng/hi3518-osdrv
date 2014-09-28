@@ -40,6 +40,14 @@ fi
 
 if [ x"$mount_ok" != "xyes" -o x"$init_ok" != "xyes" ]; then
   echo -e "\033[31;1mENTER DOWNLOAD MODE\033[0m"
+  ## light off system led
+  himm 0x201c0020 0x8 > /dev/null
+  ## startup network to default ipaddress
+  ifconfig eth0 down
+  ifconfig lo down
+  ifconfig lo 127.0.0.1
+  ifconfig eth0 192.168.1.217 netmask 255.255.255.0
+  route add default gw 192.168.1.1
   ## start tftp server to upgrade the firmware
   /usr/bin/udpsvd -vE 0 69 /usr/bin/tftpd -c /var/cache/firmware &
   exit 1
