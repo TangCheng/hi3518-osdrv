@@ -56,6 +56,5 @@ if [ x"$mount_ok" != "xyes" -o x"$init_ok" != "xyes" ]; then
   /usr/bin/udpsvd -vE 0 69 /usr/bin/tftpd -c /var/cache/firmware &
   exit 1
 else
-  /apps/bin/sysled.sh 1 &
   exit 0
 fi
