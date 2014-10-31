@@ -44,11 +44,10 @@ check_version() {
     return 1;
   fi
 
-  old_ver=$(sqlite3 /data/configuration.sqlite3 \
-          "select value from base_info where name=\"firmware\"")
+  old_ver=$(fw_version.sh)
   if [ -z $old_ver ]; then
     warn "can not get old firmware version."
-    return 1;
+    return 0;
   fi
 
   old_major=$(echo $old_ver | awk -F. '{print $1}')
@@ -65,7 +64,7 @@ check_version() {
        -z $new_major -o \
        -z $new_minor -o \
        -z $new_revsion ]; then
-    warn “bad format of version.”
+    warn "bad format of version."
     return 1
   fi
 
@@ -146,7 +145,7 @@ for f in $(ls ${fw_dir}/files); do
   fi
 done
 
-sqlite3 /data/configuration.sqlite3 "update base_info set value=\"$new_ver\" where name=\"firmware\""
+fw_version.sh $new_ver
 echo 4 > $lock_file
 ## program OK, reboot the system.
 echo -e "\033[32;1mUpgrade complete, now rebooting system...\033[0m"
