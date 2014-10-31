@@ -23,6 +23,8 @@ then
   exit 0
 fi
 
+rm -f ${act_file}
+
 if [ -f "${lock_file}" ]; then
   warn "Upgrade is processing"
   exit 0
@@ -90,12 +92,16 @@ new_ver=$(fw_decode -d ${fw_dir}/files ${fw_file} \
 if [ $? -ne 0 ]; then
   echo 0 > $lock_file
   fatal "Extract firmware failed"
+  rm -f ${fw_file}
+  rm -fr ${fw_dir}/files
   exit 1
 fi
 
 if ! check_version $new_ver; then
   echo 0 > $lock_file
   fatal "Check version failed"
+  rm -f ${fw_file}
+  rm -fr ${fw_dir}/files
   exit 1
 fi
 
