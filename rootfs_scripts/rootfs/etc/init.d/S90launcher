@@ -7,7 +7,8 @@ parttype="squashfs jffs2"
 ## default mtd device
 mtddev="/dev/mtdblock4"
 ## mount point
-appmnt="/apps"
+appmnt="/appsmnt"
+app="/apps"
 
 mtdnr=$(grep -E "\"${partname}\"" /proc/mtd \
       | grep -E -o '^mtd[0-9]{1,2}' \
@@ -32,9 +33,14 @@ done
 
 ## run etc/rc script in this partition
 init_ok=no
-if [ -x ${appmnt}/etc/rc ]; then
-  if ${appmnt}/etc/rc; then
-    init_ok=yes
+if [ x"$mount_ok" = "xyes" ];then
+  mkdir ${app}
+  cp -a ${appmnt}/* ${app}/
+  umount ${appmnt}
+  if [ -x ${app}/etc/rc ]; then
+    if ${app}/etc/rc; then
+      init_ok=yes
+    fi
   fi
 fi
 
