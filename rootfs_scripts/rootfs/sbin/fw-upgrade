@@ -23,7 +23,7 @@ then
   exit 0
 fi
 
-rm -f ${act_file}
+rm -f ${fw_dir}/${act_file}
 
 if [ -f "${lock_file}" ]; then
   warn "Upgrade is processing"
