@@ -37,6 +37,7 @@ if [ x"$mount_ok" = "xyes" ];then
   mkdir ${app}
   cp -a ${appmnt}/* ${app}/
   umount ${appmnt}
+  rm -fr ${appmnt}
   if [ -x ${app}/etc/rc ]; then
     if ${app}/etc/rc; then
       init_ok=yes
