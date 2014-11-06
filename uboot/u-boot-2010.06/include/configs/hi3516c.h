@@ -151,9 +151,9 @@
 #define CONFIG_BOOTCOMMAND "sf probe 0; sf read 0x82000000 0x80000 0x400000; bootm 0x82000000"
 
 #define CONFIG_BOOTDELAY 1
-#define CONFIG_BOOTARGS	"mem=128M console=ttyAMA0,115200n8 root=/dev/ram0 rootfstype=ramfs ip=192.168.1.100:192.168.1.99:192.168.1.1:255.255.255.0:HI3516C:eth0 mtdparts=hi_sfc:256K(boot),128K(boot_param),128K(reserve),4M(kernel),11M(rootfs),512K(param)"
+#define CONFIG_BOOTARGS	"mem=128M root=/dev/ram0 rootfstype=ramfs mtdparts=hi_sfc:256K(boot),128K(boot_param),128K(reserve),4M(kernel),9M(rootfs),2M(web),512K(param)"
 #define CONFIG_NETMASK	255.255.255.0		/* talk on MY local net */
-#define CONFIG_IPADDR	192.168.1.100		/* default static IP */
+#define CONFIG_IPADDR	192.168.1.217		/* default static IP */
 #define CONFIG_SERVERIP	192.168.1.99		/* default tftp server ip */
 #define CONFIG_ETHADDR	00:00:23:34:45:66
 #define CONFIG_BOOTFILE	"uImage"		/* file to load */
