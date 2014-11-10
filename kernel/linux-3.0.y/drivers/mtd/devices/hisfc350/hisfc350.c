@@ -980,7 +980,7 @@ static void hisfc_probe_spi_size(struct hisfc_host *host,
 	mtd->size = total;
 	mtd->erasesize = erasesize;
 
-	printk(KERN_INFO "spi size: 0x%d\n", (int)mtd->size);
+	printk(KERN_INFO "spi size: %sB\n", ultohstr(mtd->size));
 	printk(KERN_INFO "chip num: %x\n", host->num_chip);
 }
 
@@ -1158,6 +1158,18 @@ static int __devexit hisfc350_driver_remove(struct platform_device * plat_dev)
 static void hisfc350_pltdev_release(struct device *dev)
 {
 }
+
+#ifdef CONFIG_PM
+static int hisfc350_driver_suspend(struct platform_device *dev,
+		pm_message_t state)
+{
+	return 0;
+}
+static int hisfc350_driver_resume(struct platform_device *dev)
+{
+	return 0;
+}
+#endif
 
 static struct platform_driver hisfc350_driver_pltdrv = {
 	.probe		= hisfc350_driver_probe,

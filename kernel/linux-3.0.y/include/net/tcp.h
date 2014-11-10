@@ -457,6 +457,10 @@ extern int tcp_send_synack(struct sock *);
 extern void tcp_push_one(struct sock *, unsigned int mss_now);
 extern void tcp_send_ack(struct sock *sk);
 extern void tcp_send_delayed_ack(struct sock *sk);
+#ifdef CONFIG_TNK
+extern void tnk_send_ack(struct sock *sk, unsigned int rcv_nxt,
+				unsigned window);
+#endif
 
 /* tcp_input.c */
 extern void tcp_cwnd_application_limited(struct sock *sk);

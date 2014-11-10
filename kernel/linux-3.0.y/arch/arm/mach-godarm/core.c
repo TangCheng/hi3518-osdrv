@@ -54,13 +54,12 @@ static unsigned long timer1_clk_hz, timer1_clk_khz;
 
 /*#define HW_REG(a) (*(volatile unsigned int *)(a))*/
 #define HW_REG(a) readl(a)
-#define A9_AXI_SCALE_REG   IO_ADDRESS(CRG_BASE+0x28)
 #define TXIN_OSC_FRE       24000000
 #define REG_CRG0_OFFSET    IO_ADDRESS(CRG_BASE + 0x0)
 #define REG_CRG1_OFFSET    IO_ADDRESS(CRG_BASE + 0x4)
 #define get_bus_clk()({\
 	unsigned long fbdiv, pstdiv1, pstdiv2, refdiv;\
-	unsigned long tmp_reg, foutvco, busclk;\
+	unsigned long tmp_reg, foutvco, foutpostdiv, busclk;\
 	tmp_reg = HW_REG(REG_CRG0_OFFSET);\
 	pstdiv1 = (tmp_reg >> 24) & 0x7;\
 	pstdiv2 = (tmp_reg >> 27) & 0x7;\
@@ -69,13 +68,8 @@ static unsigned long timer1_clk_hz, timer1_clk_khz;
 	fbdiv = tmp_reg & 0xfff;\
 	foutvco = TXIN_OSC_FRE/refdiv;\
 	foutvco *= fbdiv;\
-	tmp_reg = HW_REG(A9_AXI_SCALE_REG);\
-	if ((tmp_reg & 0xc) == 0 || (tmp_reg & 0xc) == 0x4) {\
-		busclk = foutvco/6;\
-	} else if ((tmp_reg & 0xc) == 0x8) {\
-		busclk = foutvco/2;\
-	} else if ((tmp_reg & 0xc) == 0xc)\
-		busclk = foutvco;\
+	foutpostdiv = foutvco/(pstdiv1 * pstdiv2);\
+	busclk = foutpostdiv/6;\
 	busclk;\
 })
 

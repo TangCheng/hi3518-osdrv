@@ -177,7 +177,6 @@ static int hi_mci_wait_cmd(struct himci_host *host)
 			return 1;
 		}
 
-		himci_writel(reg_data, host->base + MCI_RINTSTS);
 		spin_unlock_irqrestore(&host->lock, flags);
 		udelay(100);
 

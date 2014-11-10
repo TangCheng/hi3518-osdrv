@@ -22,6 +22,7 @@ static inline int _hieth_irq_disable(struct hieth_netdev_local *ld, int irqs)
 
 	old = hieth_readl(ld, GLB_RW_IRQ_ENA);
 	hieth_writel(ld, old & (~irqs), GLB_RW_IRQ_ENA);
+	old = hieth_readl(ld, GLB_RW_IRQ_ENA);
 
 	return old;
 }
@@ -195,7 +196,7 @@ int hieth_xmit_release_skb(struct hieth_netdev_local *ld)
 	int ret = 0;
 	struct sk_buff *skb;
 
-	local_lock(ld);
+	local_lock_need(ld);
 
 	while (hw_xmitq_cnt_inuse(ld) < ld->tx_hw_cnt) {
 
@@ -218,7 +219,7 @@ int hieth_xmit_release_skb(struct hieth_netdev_local *ld)
 	}
 
 error_exit:
-	local_unlock(ld);
+	local_unlock_need(ld);
 	return ret;
 }
 
@@ -252,7 +253,7 @@ int hieth_feed_hw(struct hieth_netdev_local *ld)
 	struct sk_buff *skb;
 	int cnt = 0;
 
-	local_lock(ld);
+	local_lock_need(ld);
 
 	while (hieth_readl_bits(ld, UD_REG_NAME(GLB_RO_QUEUE_STAT),
 				 BITS_RECVQ_RDY)) {
@@ -273,7 +274,7 @@ int hieth_feed_hw(struct hieth_netdev_local *ld)
 		cnt++;
 	}
 
-	local_unlock(ld);
+	local_unlock_need(ld);
 
 	return cnt;
 }
@@ -284,7 +285,7 @@ int hieth_hw_recv_tryup(struct hieth_netdev_local *ld)
 	uint32_t rlen;
 	int cnt = 0;
 
-	local_lock(ld);
+	local_lock_need(ld);
 
 	while (is_recv_packet(ld)) {
 
@@ -310,7 +311,7 @@ int hieth_hw_recv_tryup(struct hieth_netdev_local *ld)
 		cnt++;
 	}
 
-	local_unlock(ld);
+	local_unlock_need(ld);
 
 	/* fill hardware receive queue again */
 	hieth_feed_hw(ld);

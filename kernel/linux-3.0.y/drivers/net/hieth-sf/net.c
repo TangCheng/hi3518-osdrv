@@ -79,6 +79,7 @@ static void hieth_adjust_link(struct net_device *dev)
 		hieth_set_linkstat(ld, stat);
 		phy_print_status(ld->phy);
 		ld->link_stat = stat;
+		hieth_set_mii_mode(ld, UD_BIT_NAME(CONFIG_HIETH_MII_RMII_MODE));
 	}
 }
 
@@ -499,6 +500,11 @@ static int hieth_net_set_mac_address(struct net_device *dev, void *p)
 	struct hieth_netdev_local *ld = netdev_priv(dev);
 	struct sockaddr *skaddr = p;
 
+	if (netif_running(dev))
+		return -EBUSY;
+	if (!is_valid_ether_addr(skaddr->sa_data))
+		return -EADDRNOTAVAIL;
+
 	local_lock(ld);
 
 	if (hieth_devs_save[UP_PORT])
@@ -663,7 +669,7 @@ static int hieth_platdev_probe_port(struct platform_device *pdev, int port)
 
 	ld->phy = phy_connect(netdev, ld->phy_name, hieth_adjust_link, 0, \
 			UD_BIT_NAME(CONFIG_HIETH_MII_RMII_MODE) ? \
-			PHY_INTERFACE_MODE_MII : PHY_INTERFACE_MODE_MII);
+			PHY_INTERFACE_MODE_RMII : PHY_INTERFACE_MODE_MII);
 	if (IS_ERR(ld->phy)) {
 		hieth_error("connect to phy_device %s failed!", ld->phy_name);
 		ld->phy = NULL;

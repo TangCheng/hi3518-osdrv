@@ -38,3 +38,4 @@ unsigned long tnk_clk_init(void);
 unsigned long mdio_clk_init(void);
 int get_clk_csr(unsigned long tnkclk);
 void reset_mac_interface_dual(int id, void *addr, u32 val);
+void reset_mac_interface_single(void *addr, u32 val);

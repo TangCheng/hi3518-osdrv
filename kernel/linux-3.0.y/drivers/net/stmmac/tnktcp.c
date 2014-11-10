@@ -926,8 +926,11 @@ out:
 		tnk_ct_rx_release(consumed_skbs);
 #endif
 #ifdef TNK_RX_CHANNEL_FLOW_CONTROL
-	if (wnd_update_flag)
-		tcp_send_ack(sk);
+	if (wnd_update_flag) {
+		struct tnkhw_connection conn;
+		tnkhw_connection_get(t->entry->index, &conn);
+		tnk_send_ack(sk, conn.next_rx_seq_num, copied);
+	}
 #endif
 	*has_copied += copied;
 		return err;
@@ -1094,8 +1097,11 @@ out:
 		tnk_ct_rx_release(consumed_skbs);
 #endif
 #ifdef TNK_RX_CHANNEL_FLOW_CONTROL
-	if (wnd_update_flag)
-		tcp_send_ack(sk);
+	if (wnd_update_flag) {
+		struct tnkhw_connection conn;
+		tnkhw_connection_get(t->entry->index, &conn);
+		tnk_send_ack(sk, conn.next_rx_seq_num, copied);
+	}
 #endif
 	if (copied)
 		return copied;

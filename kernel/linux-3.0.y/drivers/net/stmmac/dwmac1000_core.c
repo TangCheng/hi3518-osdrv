@@ -110,6 +110,7 @@ static void dwmac1000_set_filter(struct net_device *dev)
 		writel(0xffffffff, ioaddr + GMAC_HASH_HIGH);
 		writel(0xffffffff, ioaddr + GMAC_HASH_LOW);
 	} else if (!netdev_mc_empty(dev)) {
+#if 0
 		u32 mc_filter[2];
 		struct netdev_hw_addr *ha;
 
@@ -129,6 +130,10 @@ static void dwmac1000_set_filter(struct net_device *dev)
 		}
 		writel(mc_filter[0], ioaddr + GMAC_HASH_LOW);
 		writel(mc_filter[1], ioaddr + GMAC_HASH_HIGH);
+#endif
+		value = GMAC_FRAME_FILTER_PM;	/* pass all multi */
+		writel(0xffffffff, ioaddr + GMAC_HASH_HIGH);
+		writel(0xffffffff, ioaddr + GMAC_HASH_LOW);
 	}
 
 	/* Handle multiple unicast addresses (perfect filtering)*/
@@ -150,8 +155,6 @@ static void dwmac1000_set_filter(struct net_device *dev)
 	/* Enable Receive all mode (to debug filtering_fail errors) */
 	value |= GMAC_FRAME_FILTER_RA;
 #endif
-	value &= GMAC_FRAME_FILTER_BIT;
-
 	writel(value, ioaddr + GMAC_FRAME_FILTER);
 
 	CHIP_DBG(KERN_INFO "\tFrame Filter reg: 0x%08x\n\tHash regs: "

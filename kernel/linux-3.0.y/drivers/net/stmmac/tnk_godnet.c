@@ -99,3 +99,14 @@ void reset_mac_interface_dual(int id, void *addr, u32 val)
 	/*  Leave reset mode */
 	writel(0, addr + 0xc8);
 }
+void reset_mac_interface_single(void *addr, u32 val)
+{
+	/*  Enter reset mode */
+	writel(1, addr + 0xc8);
+	/*  Write the new configuration value */
+	writel(val, addr + 0xec);
+	/*  Make sure the write is fully flushed */
+	readl(addr + 0xec);
+	/*  Leave reset mode */
+	writel(0, addr + 0xc8);
+}
