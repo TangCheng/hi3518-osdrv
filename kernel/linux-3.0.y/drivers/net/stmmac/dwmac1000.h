@@ -103,7 +103,6 @@ enum inter_frame_gap {
 #define GMAC_CORE_INIT (GMAC_CONTROL_DM |  GMAC_CONTROL_PS | GMAC_CONTROL_ACS)
 
 /* GMAC Frame Filter defines */
-#define GMAC_FRAME_FILTER_BIT	0x00000000	/* Bit Multicast */
 #define GMAC_FRAME_FILTER_PR	0x00000001	/* Promiscuous Mode */
 #define GMAC_FRAME_FILTER_HUC	0x00000002	/* Hash Unicast */
 #define GMAC_FRAME_FILTER_HMC	0x00000004	/* Hash Multicast */

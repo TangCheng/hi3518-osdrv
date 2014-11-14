@@ -1073,7 +1073,7 @@ static void stmmac_poll_func(unsigned long arg)
 		writel(0x0, priv->ioaddr + 0x1108);
 	}
 
-	add_timer(&priv->poll_timer);
+	mod_timer(&priv->poll_timer, jiffies + STMMAC_POLL_TIMER);
 }
 
 static void stmmac_check_func(unsigned long arg)
@@ -1099,7 +1099,7 @@ static void stmmac_check_func(unsigned long arg)
 			atomic_inc(&stm_proc.gmac[1].out_of_order);
 	}
 
-	add_timer(&priv->check_timer);
+	mod_timer(&priv->check_timer, jiffies + STMMAC_POLL_TIMER);
 }
 
 /**

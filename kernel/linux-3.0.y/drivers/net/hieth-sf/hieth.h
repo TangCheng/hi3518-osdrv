@@ -190,6 +190,7 @@ struct hieth_netdev_local {
 		0xffffffff; \
 		(hireg_readl(base, ofs)&_mask)>>(_shift); })
 
+#if 0
 #define local_lock_init(ld)	spin_lock_init(&(ld)->lock)
 #define local_lock_exit(ld)
 #define local_lock(ld)		spin_lock_irqsave(&(ld)->lock, (ld)->lockflags)
@@ -197,6 +198,18 @@ struct hieth_netdev_local {
 				spin_unlock_irqrestore(\
 								&(ld)->lock,\
 								(ld)->lockflags)
+#else
+#define local_lock_init(ld)	spin_lock_init(&(ld)->lock)
+#define local_lock_exit(ld)
+#define local_lock(ld)
+#define local_unlock(ld)
+#define local_lock_need(ld)     spin_lock_irqsave(&(ld)->lock, (ld)->lockflags)
+#define local_unlock_need(ld) \
+	spin_unlock_irqrestore(\
+			&(ld)->lock,\
+			(ld)->lockflags)
+#endif
+
 
 #define UD_REG_NAME(name)       ((ld->port == UP_PORT) ? U_##name : D_##name)
 #define UD_BIT_NAME(name)       ((ld->port == UP_PORT) ? name##_U : name##_D)
