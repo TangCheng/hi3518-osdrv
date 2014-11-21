@@ -202,9 +202,15 @@ hibusybox: prepare
 	    done; \
 	  popd; \
 	fi
-	KCONFIG_ALLCONFIG=$(OSDRV_DIR)/busybox/busybox-1.16.1/$(BUSYBOX_CFG) \
-        make -C $(OSDRV_DIR)/busybox/busybox-1.16.1 \
-              ARCH=arm CROSS_COMPILE=$(OSDRV_CROSS)- allnoconfig; \
+	if [ -f $(OSDRV_DIR)/busybox/defconfig ]; then \
+	  KCONFIG_ALLCONFIG=$(OSDRV_DIR)/busybox/defconfig \
+          make -C $(OSDRV_DIR)/busybox/busybox-1.16.1 \
+                ARCH=arm CROSS_COMPILE=$(OSDRV_CROSS)- allnoconfig; \
+	else \
+	  KCONFIG_ALLCONFIG=$(OSDRV_DIR)/busybox/busybox-1.16.1/$(BUSYBOX_CFG) \
+          make -C $(OSDRV_DIR)/busybox/busybox-1.16.1 \
+                ARCH=arm CROSS_COMPILE=$(OSDRV_CROSS)- allnoconfig; \
+	fi
 	#find $(OSDRV_DIR)/busybox/busybox-1.16.1 | xargs touch
 	pushd $(OSDRV_DIR)/busybox/busybox-1.16.1/; \
 	  make -j $(NR_CPUS) >/dev/null 2>&1; \
