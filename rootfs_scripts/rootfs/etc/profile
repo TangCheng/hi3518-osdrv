@@ -15,6 +15,7 @@ LD_LIBRARY_PATH="/usr/local/lib:/usr/lib"
 
 export PATH
 export LD_LIBRARY_PATH
+PS1="[\u@\h \W]\\$ "
 
 # ANSI COLORS
 CRE="[K"
