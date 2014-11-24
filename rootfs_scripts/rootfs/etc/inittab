@@ -56,7 +56,8 @@
 ::sysinit:/etc/init.d/rcS
 ::sysinit:/bin/mkdir /dev/shm
 
-::respawn:/sbin/inotifyd /sbin/fw-upgrade /var/cache/firmware
+# monitor /var/cache/firmware for firmware upload
+::respawn:/sbin/inotifyd /sbin/fw-upgrade /var/cache/firmware:wy
 
 # /bin/sh invocations on selected ttys
 #

@@ -2,10 +2,9 @@
 
 evt=$1
 fw_dir=$2
-evt_file=$3
+fw_file=$3
 
-act_file="upgrade-start"
-fw_file="${fw_dir}/firmware-hi3518.bin"
+fw_path="${fw_dir}/${fw_file}"
 lock_file="${fw_dir}/firmware-lock"
 
 warn() {
@@ -16,29 +15,27 @@ fatal() {
   echo -e "\033[31;1mFATAL: $*\033[0m"
 }
 
-## start when act_file is download
-if ! [ x"${evt}" = "xw" \
-    -a x"${evt_file}" = x"${act_file}" ];
-then
-  exit 0
+## only process the event:
+## w: Writable file was closed
+## y: File was moved to Y
+if ! [ x"${evt}" = "xw" -o x"${evt}" = "xy" ]; then
+  exit 1
 fi
 
-rm -f ${fw_dir}/${act_file}
+## get file extension
+file_ext=${fw_file##*.}
+## firmware must be .bin or .fw extension
+[ x"${file_ext}" != x"${fw_file}" ] || exit 1
+[ x"${file_ext}" = "xbin" -o x"${file_ext}" = "xfw" ] || exit 1
 
 if [ -f "${lock_file}" ]; then
   warn "Upgrade is processing"
-  exit 0
+  exit 1
 fi
 
 ## delete lock_file on signal 0/1/2/3/6/9/15
 trap "rm -f ${lock_file}; exit 1" 0 1 2 3 6 9 15
 touch $lock_file || exit 1
-
-## check if the firmware file exists
-if ! [ -f "${fw_file}" ]; then
-  fatal "Firmware file not found"
-  exit 1
-fi
 
 check_version() {
   if [ -z $1 ]; then
@@ -84,23 +81,20 @@ check_version() {
 }
 
 ## extract the firmware
-echo 2 > $lock_file
 echo -e "\033[1mExtracting the firmware...\033[0m"
-new_ver=$(fw_decode -d ${fw_dir}/files ${fw_file} \
+new_ver=$(fw_decode -d ${fw_dir}/files ${fw_path} \
         | grep 'Version' \
         | awk '{print $2}')
 if [ $? -ne 0 ]; then
-  echo 0 > $lock_file
   fatal "Extract firmware failed"
-  rm -f ${fw_file}
+  rm -f ${fw_path}
   rm -fr ${fw_dir}/files
   exit 1
 fi
 
 if ! check_version $new_ver; then
-  echo 0 > $lock_file
   fatal "Check version failed"
-  rm -f ${fw_file}
+  rm -f ${fw_path}
   rm -fr ${fw_dir}/files
   exit 1
 fi
@@ -135,7 +129,6 @@ EOF
   return 0
 }
 
-echo 3 > $lock_file
 ## program every partition
 for f in $(ls ${fw_dir}/files); do
   if ! get_mtddev_from_name $f; then
@@ -152,7 +145,6 @@ for f in $(ls ${fw_dir}/files); do
 done
 
 fw_version.sh $new_ver
-echo 4 > $lock_file
 ## program OK, reboot the system.
 echo -e "\033[32;1mUpgrade complete, now rebooting system...\033[0m"
 sleep 1
