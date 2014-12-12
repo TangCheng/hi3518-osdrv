@@ -81,11 +81,13 @@ check_version() {
 }
 
 ## extract the firmware
+echo 2 > ${lock_file}
 echo -e "\033[1mExtracting the firmware...\033[0m"
 new_ver=$(fw_decode -d ${fw_dir}/files ${fw_path} \
         | grep 'Version' \
         | awk '{print $2}')
 if [ $? -ne 0 ]; then
+  echo 0 > ${lock_file}
   fatal "Extract firmware failed"
   rm -f ${fw_path}
   rm -fr ${fw_dir}/files
@@ -130,6 +132,7 @@ EOF
 }
 
 ## program every partition
+echo 3 > ${lock_file}
 for f in $(ls ${fw_dir}/files); do
   if ! get_mtddev_from_name $f; then
     continue
@@ -146,6 +149,7 @@ done
 
 fw_version.sh $new_ver
 ## program OK, reboot the system.
+echo 4 > ${lock_file}
 echo -e "\033[32;1mUpgrade complete, now rebooting system...\033[0m"
 sleep 1
 reboot
