@@ -352,10 +352,10 @@ CONFIG_ALIGNMENT_TRAP=y
 # CONFIG_USE_OF is not set
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE="mem=128M console=ttyAMA0,115200 console=ttyMTD,blackbox"
-CONFIG_CMDLINE_FROM_BOOTLOADER=y
+CONFIG_CMDLINE="mem=96M console=ttyAMA0,115200n8 root=/dev/ram0 rootfstype=ramfs mtdparts=hi_sfc:256K(boot),128K(boot_param),128K(reserve),4M(kernel),9M(rootfs),2M(www),512K(param)"
+# CONFIG_CMDLINE_FROM_BOOTLOADER is not set
 # CONFIG_CMDLINE_EXTEND is not set
-# CONFIG_CMDLINE_FORCE is not set
+CONFIG_CMDLINE_FORCE=y
 # CONFIG_XIP_KERNEL is not set
 # CONFIG_KEXEC is not set
 # CONFIG_CRASH_DUMP is not set
@@ -1745,7 +1745,7 @@ CONFIG_HAVE_ARCH_KGDB=y
 # CONFIG_TEST_KSTRTOX is not set
 # CONFIG_STRICT_DEVMEM is not set
 # CONFIG_ARM_UNWIND is not set
-# CONFIG_DEBUG_USER is not set
+CONFIG_DEBUG_USER=y
 # CONFIG_DEBUG_LL is not set
 # CONFIG_OC_ETM is not set
 
