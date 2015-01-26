@@ -122,6 +122,8 @@ hiboot: prepare
 	pushd $(OSDRV_DIR)/uboot/u-boot-2010.06; \
 	  make ARCH=arm CROSS_COMPILE=$(OSDRV_CROSS)- \
 	        -j $(NR_CPUS) >/dev/null ; \
+	  make tools ARCH=arm CROSS_COMPILE=$(OSDRV_CROSS)- \
+	        -j $(NR_CPUS) >/dev/null ; \
 	popd
 	cp $(OSDRV_DIR)/uboot/u-boot-2010.06/u-boot.bin \
 	   $(OSDRV_DIR)/pub/$(PUB_IMAGE)
@@ -291,9 +293,19 @@ hiboardtools: hirootfs_prepare hiboardtools_clean
 	rm $(OSDRV_DIR)/pub/bin/$(PUB_BOARD)/ubi*
 	cp $(OSDRV_DIR)/tools/board_tools/hifat/$(LIB_TYPE)/* \
 	   $(OSDRV_DIR)/pub/bin/$(PUB_BOARD)/hifat/ -af
+	pushd $(OSDRV_DIR)/tools/board_tools/ethtool-3.18; \
+	  mkdir -p build-$(CHIP); \
+	  pushd build-$(CHIP); \
+	    ../configure --build=$${MACHTYPE} --host=$(OSDRV_CROSS) \
+	                 --prefix=/usr || exit 1; \
+	    make -j$(NR_CPUS) || exit 1; \
+	    make install DESTDIR=$(OSDRV_DIR)/pub/$(PUB_ROOTFS) || exit 1; \
+	    rm -rf $(OSDRV_DIR)/pub/$(PUB_ROOTFS)/usr/share/man; \
+	  popd; \
+	popd
 	pushd $(OSDRV_DIR)/tools/board_tools/iupdate; \
-	  mkdir -p build-hi3518; \
-	  pushd build-hi3518; \
+	  mkdir -p build-$(CHIP); \
+	  pushd build-$(CHIP); \
 	    ../configure --build=$${MACHTYPE} --host=$(OSDRV_CROSS) \
 	                 --prefix=/usr || exit 1; \
 	    make -j$(NR_CPUS) || exit 1; \
@@ -306,7 +318,8 @@ hiboardtools_clean:
 	make -C $(OSDRV_DIR)/tools/board_tools/reg-tools-1.0.0 clean
 	make -C $(OSDRV_DIR)/tools/board_tools/udev-100 clean
 	pushd $(OSDRV_DIR)/tools/board_tools/mtd-utils;make distclean;popd
-	rm -rf $(OSDRV_DIR)/tools/board_tools/iupdate/build-hi3518; \
+	rm -rf $(OSDRV_DIR)/tools/board_tools/ethtool-3.18/build-$(CHIP)
+	rm -rf $(OSDRV_DIR)/tools/board_tools/iupdate/build-$(CHIP)
 
 
 ##########################################################################################
