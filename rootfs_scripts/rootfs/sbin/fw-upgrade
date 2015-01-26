@@ -34,7 +34,13 @@ if [ -f "${lock_file}" ]; then
 fi
 
 ## delete lock_file on signal 0/1/2/3/6/9/15
-trap "rm -f ${lock_file}; exit 1" 0 1 2 3 6 9 15
+cleanup() {
+  rm -f ${lock_file}
+  rm -f ${fw_path}
+  rm -rf ${fw_dir}/files
+}
+trap "cleanup; exit 1" 0 1 2 3 6 9 15
+
 touch $lock_file || exit 1
 
 check_version() {
@@ -89,15 +95,6 @@ new_ver=$(fw_decode -d ${fw_dir}/files ${fw_path} \
 if [ $? -ne 0 ]; then
   echo 0 > ${lock_file}
   fatal "Extract firmware failed"
-  rm -f ${fw_path}
-  rm -fr ${fw_dir}/files
-  exit 1
-fi
-
-if ! check_version $new_ver; then
-  fatal "Check version failed"
-  rm -f ${fw_path}
-  rm -fr ${fw_dir}/files
   exit 1
 fi
 
@@ -131,6 +128,19 @@ EOF
   return 0
 }
 
+## run pre-upgrade.sh
+if [ -f ${fw_dir}/files/pre-upgrade.sh ]; then
+  echo 3 > ${lock_file}
+  cd ${fw_dir}/files
+  . pre-upgrade.sh
+  cd -
+fi
+
+if ! check_version $new_ver; then
+  fatal "Check version failed"
+  exit 1
+fi
+
 ## program every partition
 echo 3 > ${lock_file}
 for f in $(ls ${fw_dir}/files); do
@@ -139,6 +149,9 @@ for f in $(ls ${fw_dir}/files); do
   fi
   if [ -c ${mtdcdev} ]; then
     echo -e "\033[1mPrograming partition '${f}' to '${mtdcdev}'...\033[0m"
+    if grep ${mtdbdev} /proc/mounts; then
+      umount ${mtdbdev}
+    fi
     flash_eraseall ${mtdcdev}
     flashcp -v ${fw_dir}/files/$f ${mtdcdev}
   else
@@ -146,6 +159,14 @@ for f in $(ls ${fw_dir}/files); do
     continue
   fi
 done
+
+## run post-upgrade.sh
+if [ -f ${fw_dir}/files/post-upgrade.sh ]; then
+  echo 3 > ${lock_file}
+  cd ${fw_dir}/files
+  . post-upgrade.sh
+  cd -
+fi
 
 fw_version.sh $new_ver
 ## program OK, reboot the system.
