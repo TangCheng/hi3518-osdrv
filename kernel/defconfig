@@ -352,7 +352,7 @@ CONFIG_ALIGNMENT_TRAP=y
 # CONFIG_USE_OF is not set
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE="mem=96M console=ttyAMA0,115200n8 root=/dev/ram0 rootfstype=ramfs mtdparts=hi_sfc:256K(boot),128K(boot_param),128K(reserve),4M(kernel),9M(rootfs),2M(www),512K(param)"
+CONFIG_CMDLINE="mem=128M console=ttyAMA0,115200n8 root=/dev/ram0 rootfstype=ramfs mtdparts=hi_sfc:256K(boot),128K(boot_param),128K(reserve),4M(kernel),9M(rootfs),2M(www),512K(param)"
 # CONFIG_CMDLINE_FROM_BOOTLOADER is not set
 # CONFIG_CMDLINE_EXTEND is not set
 CONFIG_CMDLINE_FORCE=y
