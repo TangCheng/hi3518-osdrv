@@ -55,6 +55,7 @@
 #
 ::sysinit:/etc/init.d/rcS
 ::sysinit:/bin/mkdir /dev/shm
+::sysinit:/sbin/syslogd -C100
 
 # monitor /var/cache/firmware for firmware upload
 ::respawn:/sbin/inotifyd /sbin/fw-upgrade /var/cache/firmware:wy
