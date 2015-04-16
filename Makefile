@@ -303,6 +303,16 @@ hiboardtools: hirootfs_prepare hiboardtools_clean
 	    rm -rf $(OSDRV_DIR)/pub/$(PUB_ROOTFS)/usr/share/man; \
 	  popd; \
 	popd
+	pushd $(OSDRV_DIR)/uboot/u-boot-2010.06; \
+	  make env \
+	       ARCH=arm CROSS_COMPILE=$(OSDRV_CROSS)- \
+	       -j $(NR_CPUS) >/dev/null || exit 1; \
+	  install -D -m 0755 \
+	          $(OSDRV_DIR)/uboot/u-boot-2010.06/tools/env/fw_printenv \
+	          $(OSDRV_DIR)/pub/$(PUB_ROOTFS)/usr/sbin; \
+	  ln -sf fw_printenv \
+	         $(OSDRV_DIR)/pub/$(PUB_ROOTFS)/usr/sbin/fw_setenv; \
+	popd
 	pushd $(OSDRV_DIR)/tools/board_tools/iupdate; \
 	  mkdir -p build-$(CHIP); \
 	  pushd build-$(CHIP); \
