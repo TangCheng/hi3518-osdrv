@@ -372,6 +372,7 @@ int fw_setenv (int argc, char *argv[])
 	 * Delete any existing definition
 	 */
 	if (oldval) {
+#if 0
 		/*
 		 * Ethernet Address and serial# can be set only once
 		 */
@@ -381,6 +382,7 @@ int fw_setenv (int argc, char *argv[])
 			errno = EROFS;
 			return -1;
 		}
+#endif
 
 		if (*++nxt == '\0') {
 			*env = '\0';
