@@ -43,49 +43,6 @@ trap "cleanup; exit 1" 0 1 2 3 6 9 15
 
 touch $lock_file || exit 1
 
-check_version() {
-  if [ -z $1 ]; then
-    warn "unknown new firmware version."
-    return 1;
-  fi
-
-  old_ver=$(fw_version.sh)
-  if [ -z $old_ver ]; then
-    warn "can not get old firmware version."
-    return 0;
-  fi
-
-  old_major=$(echo $old_ver | awk -F. '{print $1}')
-  old_minor=$(echo $old_ver | awk -F. '{print $2}')
-  old_revsion=$(echo $old_ver | awk -F. '{print $3}')
-
-  new_major=$(echo $1 | awk -F. '{print $1}')
-  new_minor=$(echo $1 | awk -F. '{print $2}')
-  new_revsion=$(echo $1 | awk -F. '{print $3}')
-
-  if [ -z $old_major -o \
-       -z $old_minor -o \
-       -z $old_revsion -o \
-       -z $new_major -o \
-       -z $new_minor -o \
-       -z $new_revsion ]; then
-    warn "bad format of version."
-    return 1
-  fi
-
-  if [ $new_major -gt $old_major ]; then
-    return 0
-  fi
-  if [ $new_minor -gt $old_minor ]; then
-    return 0
-  fi
-  if [ $new_revsion -gt $old_revsion ]; then
-    return 0
-  fi
-
-  return 1
-}
-
 ## extract the firmware
 echo 2 > ${lock_file}
 echo -e "\033[1mExtracting the firmware...\033[0m"
@@ -134,11 +91,6 @@ if [ -f ${fw_dir}/files/pre-upgrade.sh ]; then
   cd ${fw_dir}/files
   . pre-upgrade.sh
   cd -
-fi
-
-if ! check_version $new_ver; then
-  fatal "Check version failed"
-  exit 1
 fi
 
 ## program every partition
