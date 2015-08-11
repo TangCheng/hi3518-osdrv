@@ -16,7 +16,7 @@ do
 	if [ -x $initscript ] ;
 	then
 		echo "[RCS]: $initscript"
-		$initscript
+		$initscript start
 	fi
 done
 
